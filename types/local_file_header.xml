@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<cd:Record name="local_file_header" format="binary" last-modified="2015-10-20" xmlns:cd="http://www.stcorp.nl/coda/definition/2008/07" xmlns:ct="http://www.stcorp.nl/coda/test/2008/10">
+  <cd:Field name="signature">
+    <cd:Raw>
+      <cd:BitSize>32</cd:BitSize>
+    </cd:Raw>
+  </cd:Field>
+  <cd:Field name="version">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="bit_flag">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="compression_method">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="last_mod_file_time">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="last_mod_file_date">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="crc32">
+    <cd:Integer>
+      <cd:NativeType>uint32</cd:NativeType>
+      <cd:ByteSize>4</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="compressed_size">
+    <cd:Integer>
+      <cd:NativeType>uint32</cd:NativeType>
+      <cd:ByteSize>4</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="uncompressed_size">
+    <cd:Integer>
+      <cd:NativeType>uint32</cd:NativeType>
+      <cd:ByteSize>4</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="file_name_length">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="extra_field_length">
+    <cd:Integer>
+      <cd:NativeType>uint16</cd:NativeType>
+      <cd:ByteSize>2</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="file_name">
+    <cd:Text>
+      <cd:ByteSize>int(../file_name_length)</cd:ByteSize>
+    </cd:Text>
+  </cd:Field>
+  <cd:Field name="extra_field">
+    <cd:Array>
+      <cd:Dimension>unboundindex(., byteoffset(.) >= byteoffset(:) + int(:/../extra_field_length))</cd:Dimension>
+      <cd:Union>
+        <cd:FieldExpression><![CDATA[if(int(:/header_id) == 1, 1, 0)]]></cd:FieldExpression>
+        <cd:Field name="generic">
+          <cd:Record>
+            <cd:Field name="header_id">
+              <cd:Integer>
+                <cd:NativeType>uint16</cd:NativeType>
+                <cd:ByteSize>2</cd:ByteSize>
+                <cd:LittleEndian/>
+              </cd:Integer>
+            </cd:Field>
+            <cd:Field name="data_size">
+              <cd:Integer>
+                <cd:NativeType>uint16</cd:NativeType>
+                <cd:ByteSize>2</cd:ByteSize>
+                <cd:LittleEndian/>
+              </cd:Integer>
+            </cd:Field>
+            <cd:Field name="data">
+              <cd:Raw>
+                <cd:BitSize><![CDATA[int(../data_size) * 8]]></cd:BitSize>
+              </cd:Raw>
+            </cd:Field>
+          </cd:Record>
+        </cd:Field>
+        <cd:Field name="zip64">
+          <cd:Record>
+            <cd:Field name="header_id">
+              <cd:Integer>
+                <cd:NativeType>uint16</cd:NativeType>
+                <cd:ByteSize>2</cd:ByteSize>
+                <cd:LittleEndian/>
+              </cd:Integer>
+            </cd:Field>
+            <cd:Field name="data_size">
+              <cd:Integer>
+                <cd:NativeType>uint16</cd:NativeType>
+                <cd:ByteSize>2</cd:ByteSize>
+                <cd:LittleEndian/>
+              </cd:Integer>
+            </cd:Field>
+            <cd:Field name="uncompressed_size">
+              <cd:Integer>
+                <cd:NativeType>uint64</cd:NativeType>
+                <cd:ByteSize>8</cd:ByteSize>
+                <cd:LittleEndian/>
+              </cd:Integer>
+            </cd:Field>
+            <cd:Field name="compressed_size">
+              <cd:Integer>
+                <cd:NativeType>uint64</cd:NativeType>
+                <cd:ByteSize>8</cd:ByteSize>
+                <cd:LittleEndian/>
+              </cd:Integer>
+            </cd:Field>
+          </cd:Record>
+        </cd:Field>
+      </cd:Union>
+    </cd:Array>
+  </cd:Field>
+</cd:Record>

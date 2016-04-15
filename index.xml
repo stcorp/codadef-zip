@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<cd:ProductClass name="ZIP" last-modified="2015-10-20" xmlns:cd="http://www.stcorp.nl/coda/definition/2008/07">
+  <cd:Description>.ZIP File Format</cd:Description>
+  <cd:ProductType name="ZIP">
+    <cd:Description>ZIP file</cd:Description>
+    <cd:ProductDefinition id="zip" format="binary" version="0">
+      <cd:Description>https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT</cd:Description>
+      <cd:DetectionRule>
+        <cd:MatchData offset="0">PK\003\004</cd:MatchData>
+      </cd:DetectionRule>
+    </cd:ProductDefinition>
+  </cd:ProductType>
+</cd:ProductClass>

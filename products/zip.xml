@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<cd:ProductDefinition id="zip" format="binary" last-modified="2015-10-20" xmlns:cd="http://www.stcorp.nl/coda/definition/2008/07">
+  <cd:Record>
+    <cd:Field name="file">
+      <cd:Array>
+        <cd:Dimension><![CDATA[$num_files]]></cd:Dimension>
+        <cd:Record>
+          <cd:Field name="local_header">
+            <cd:NamedType id="local_file_header"/>
+          </cd:Field>
+          <cd:Field name="data">
+            <cd:Raw>
+              <cd:BitSize><![CDATA[if(int(../local_header/compressed_size) != 4294967295, int(../local_header/compressed_size), int(../local_header/extra_field[index(:/../local_header/extra_field, exists(./zip64))]/zip64/compressed_size)) * 8]]></cd:BitSize>
+            </cd:Raw>
+          </cd:Field>
+        </cd:Record>
+      </cd:Array>
+    </cd:Field>
+    <cd:Field name="central_directory_header">
+      <cd:Array>
+        <cd:Dimension><![CDATA[$num_entries]]></cd:Dimension>
+        <cd:NamedType id="central_directory_header"/>
+      </cd:Array>
+      <cd:BitOffset><![CDATA[$cd_offset * 8]]></cd:BitOffset>
+    </cd:Field>
+    <cd:Field name="zip64_end_of_central_directory_record">
+      <cd:NamedType id="zip64_end_of_central_directory_record"/>
+      <cd:BitOffset><![CDATA[$eocdr64_offset * 8]]></cd:BitOffset>
+      <cd:Available><![CDATA[$eocdr64_available == 1]]></cd:Available>
+    </cd:Field>
+    <cd:Field name="zip64_end_of_central_directory_record_locator">
+      <cd:NamedType id="zip64_end_of_central_directory_record_locator"/>
+      <cd:BitOffset><![CDATA[$eocdrl64_offset * 8]]></cd:BitOffset>
+      <cd:Available><![CDATA[$eocdr64_available == 1]]></cd:Available>
+    </cd:Field>
+    <cd:Field name="end_of_central_directory_record">
+      <cd:NamedType id="end_of_central_directory_record"/>
+      <cd:BitOffset><![CDATA[$eocdr_offset * 8]]></cd:BitOffset>
+    </cd:Field>
+  </cd:Record>
+  <cd:ProductVariable name="num_entries">
+    <cd:Init><![CDATA[$num_entries = int(/end_of_central_directory_record/num_central_directory_entries_on_disk)]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="eocdr64_available">
+    <cd:Init><![CDATA[$eocdr64_available = if(bytes(/, $eocdrl64_offset, 4) == "PK\006\007", 1, 0)]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="eocdr64_offset">
+    <cd:Init><![CDATA[$eocdr64_offset = int(/zip64_end_of_central_directory_record_locator/zip64_central_directory_offset)]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="eocdrl64_offset">
+    <cd:Init><![CDATA[$eocdrl64_offset = byteoffset(/end_of_central_directory_record) - 20]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="cd_offset">
+    <cd:Init><![CDATA[$cd_offset = if($eocdr64_available == 1, int(/zip64_end_of_central_directory_record/central_directory_offset), int(/end_of_central_directory_record/central_directory_offset))]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="eocdr_offset">
+    <cd:Init><![CDATA[$eocdr_offset = filesize() - 22]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="file_offset">
+    <cd:Dimension><![CDATA[$num_entries]]></cd:Dimension>
+    <cd:Init><![CDATA[for i = 0 to $num_entries - 1 do $file_offset[i] = if(int(/central_directory_header[i]/uncompressed_size) == 0, -1, if(int(/central_directory_header[i]/local_header_offset) != 4294967295, int(/central_directory_header[i]/local_header_offset), int(/central_directory_header[i]/extra_field[index(/central_directory_header[i]/extra_field, exists(./zip64))]/zip64/local_header_offset)))]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="file_compressed_size">
+    <cd:Dimension><![CDATA[$num_entries]]></cd:Dimension>
+    <cd:Init><![CDATA[for i = 0 to $num_entries - 1 do $file_compressed_size[i] = if(int(/central_directory_header[i]/uncompressed_size) == 0, -1, if(int(/central_directory_header[i]/compressed_size) != 4294967295, int(/central_directory_header[i]/compressed_size), int(/central_directory_header[i]/extra_field[index(/central_directory_header[i]/extra_field, exists(./zip64))]/zip64/compressed_size)))]]></cd:Init>
+  </cd:ProductVariable>
+  <cd:ProductVariable name="num_files">
+    <cd:Init><![CDATA[$num_files = $num_entries]]></cd:Init>
+  </cd:ProductVariable>
+</cd:ProductDefinition>

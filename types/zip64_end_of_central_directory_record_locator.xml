@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<cd:Record name="zip64_end_of_central_directory_record_locator" format="binary" last-modified="2015-10-20" xmlns:cd="http://www.stcorp.nl/coda/definition/2008/07" xmlns:ct="http://www.stcorp.nl/coda/test/2008/10">
+  <cd:Field name="signature">
+    <cd:Raw>
+      <cd:BitSize>32</cd:BitSize>
+    </cd:Raw>
+  </cd:Field>
+  <cd:Field name="zip64_central_directory_start_disk_number">
+    <cd:Integer>
+      <cd:NativeType>uint32</cd:NativeType>
+      <cd:ByteSize>4</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="zip64_central_directory_offset">
+    <cd:Integer>
+      <cd:NativeType>uint64</cd:NativeType>
+      <cd:ByteSize>8</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+  <cd:Field name="total_num_disks">
+    <cd:Integer>
+      <cd:NativeType>uint32</cd:NativeType>
+      <cd:ByteSize>4</cd:ByteSize>
+      <cd:LittleEndian/>
+    </cd:Integer>
+  </cd:Field>
+</cd:Record>
